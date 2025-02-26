@@ -1,0 +1,94 @@
+// 네이버 이미지 검색 API 사용법 정리
+API 호출할 때는 검색어와 검색 조건을 쿼리 스트링 형식으로 전달
+헤더에 클라이언트 Id/ 시크릿 값 전송해서 사용한다
+
+Client Id : 21mzA1WQkPGCnzpEPj6Z
+Client Secret : vaxbh7ijjv
+
+요청 url : https://openapi.naver.com/v1/search/image
+curl "https://openapi.naver.com/v1/search/image.xml?query=%EC%A3%BC%EC%8B%9D&display=10&start=1&sort=sim" \
+    -H "X-Naver-Client-Id: {애플리케이션 등록 시 발급받은 클라이언트 아이디 값}" \
+    -H "X-Naver-Client-Secret: {애플리케이션 등록 시 발급받은 클라이언트 시크릿 값}" -v
+
+
+  final url = Uri.parse(
+      'https://openapi.naver.com/v1/search/image.xml?query=$query&display=10&start=1&sort=sim');
+
+  final headers = {
+    'X-Naver-Client-Id': '{애플리케이션 등록 시 발급받은 클라이언트 아이디 값}',
+    'X-Naver-Client-Secret': '{애플리케이션 등록 시 발급받은 클라이언트 시크릿 값}',
+  };
+
+   * 쿼리 스트링 작성법
+   URL? key1 = value & key2 = value
+   ?: URL 다음을 구분할때 씀
+   & : 키와 벨류 다음을 구분할때 연결함
+
+   rss/channel/item
+
+   item 구조
+
+
+   // 사용한 라이브러리
+   http
+   provider
+
+
+
+
+
+   // 프레젠테이션 레이어
+   스크린
+
+
+   -------------------------------
+   // 여기서 하자
+
+   데이터 레이어
+   <ApiService>
+   //이해 시작
+   //서비스에서는 getImageFromApi메서드 존재
+   // 그 안에 url , 헤더 존재.
+   // 서비스에서는 ImageModel에 담아서 빼감
+   <ImageModel>
+   // ImageModelItem은 title, link 가진 객체임
+   // 이를 ImageModel 이라는 List에 담음
+    <Repository>
+    //메서드 하나 존재.
+    // apiservice의 중간다리
+
+    도메인 레이어
+    <SearchUseCase>
+    execute는 true, false 반환함 , 그리고 images에 담음
+
+이제부터 프레젠테이션레이어
+    <SearchViewModel> -> enum idle,searching, complete,error
+    useCase 변수로 받아옴 ,
+    search 메서드 존재-> 진행됨에 따라 state 변경
+    useCase의 결과는 true/false임-> 실행만하면 useCase.images에 값 담겨있음
+    다 한곳에 값이 모여있음
+
+    <Search View>
+    1. TextEditingController() -> controller 파라미터에 들어감, 텍스트필드 컨트롤러
+    기능 -> controller.text 하면 입력되있는 임시상태를 넘겨줌.
+    2.WidgetsBinding.instance.addPostFrameCallback( (_) { } )
+    (_) 는 매개변수가 실제로 사용되지 않음을 의미한다.
+    addPostFrameCallback
+    이는 현재 프레임의 빌드가 완료된 후 다음 프레임 시작되기 직전에 콜백함수를 실행하도록 예약.
+    WidgetsBinding.instance는 무슨뜻일까 ?
+    상태를 이용해서, 검색이 완료되면 이동함
+
+    -> 현재프레임이 그려지면 grid로 이동
+
+    <GridViewModel>
+    usecase 받아옴, images 받아옴
+    ListView에 뿌림
+
+
+-> 추가하기
+
+1. 앱 그리드뷰에서 리스트 뷰로 이동하는 버튼 생성 -> usecase에 보관이 용이하겠다
+2. 리스트뷰에서 다시 검색창으로 돌아오는 버튼 생성
+
+1. 이동하는 버튼 생성 완료 그리드뷰 구현 완료
+2. 다시 검색창으로 돌아오기 .

@@ -1,0 +1,93 @@
+@startuml
+
+
+class SearchView {
+    + SearchViewModel viewModel
+
+}
+
+class GridView {
+    + GridViewModel viewModel
+}
+
+class ListViewModel {
+    + GridViewModel viewModel
+}
+
+enum SearchState {
+    case idle
+    case searching
+    case complete
+    case error
+}
+
+class SearchViewModel {
+    + SearchState state
+    + SearchUseCase usecase 
+    + Future<void> search(Sting searchWord)
+    + SearchViewModel(this.usecase)
+}
+
+class GridViewModel {
+    + SearchUseCase usecase 
+    + GridViewModel(this.usecase)
+}
+
+class ListViewModel {
+    + SearchUseCase usecase 
+    + ListViewModel(this.usecase)
+}
+
+class SearchUseCase {
+    + List<ImageModel> items
+
+    _repository : Repository
+    UseCase(repository : Repository)
+    search(searchWord : String) : Future<List<ImageModel>>
+}
+
+class Repository {
+    _apiService : ApiService
+    Repository(apiService : ApiService)
+    getImage(prompt : String) : Future<List<ImageModel>>
+}
+
+class ApiService {
+    _httpClient : http.Client
+    ApiService(httpClient : http.Client)
+    getImagesFromAPI(prompt : String) : Future<List<ImageModel>>
+}
+
+class ImageModel {
+    title : String
+    link : String
+    ImageModel(title : String, link : String)
+    + fromJson(json : Map<String, dynamic>) : ImageModel
+}
+
+MyScreen -- _MyScreenState : creates
+_MyScreenState -- MyViewModel : uses
+MyViewModel -- UseCase : uses
+UseCase -- Repository : uses
+Repository -- ApiService : uses
+ApiService -- http.Client : uses
+MyViewModel -- ImageModel : contains
+
+SearchView --> StatelessWidget: implements
+GridView --> StatelessWidget: implements
+ListView --> StatelessWidget: implements
+
+ListViewModel --> ChangeNotifier: implements
+GridViewModel --> ChangeNotifier: implements
+SearchViewModel --> ChangeNotifier: implements
+
+
+note right of MyScreen : 리스트/그리드 버튼, 검색창, 이미지 표시
+note right of _MyScreenState : build 메서드
+note right of MyViewModel : Provider 사용, UseCase 주입
+note right of UseCase : Repository 주입, 그리드/리스트 처리 로직
+note right of Repository : ApiService 주입
+note right of ApiService : http.Client 사용, API 호출
+note right of ImageModel : 이미지 정보 저장 (title, link)
+
+@enduml
