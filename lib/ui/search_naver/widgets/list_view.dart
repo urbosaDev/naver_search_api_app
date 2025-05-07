@@ -16,27 +16,33 @@ class ListView1 extends StatelessWidget {
       appBar: AppBar(
         title: Text('리스트뷰'),
       ),
-      body: Expanded(
-        child: ListView(
-          children: [
-            if (viewModel.images.length > 0)
-              for (var image in viewModel.images)
-                Image.network(
-                  image.link,
-                ),
-            FloatingActionButton(onPressed: (){
-              Navigator.of(context).push(
-                MaterialPageRoute(builder:
-                (context) => ChangeNotifierProvider(
-                    create:(_) => GridViewModel(viewModel.usecase),
-                    child: GridView1(),
-                ),
-                )
-              );
-            },child: Text('그리드뷰로'),),
-          ],
-        ),
-
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              children: [
+                if (viewModel.images.isNotEmpty)
+                  for (var image in viewModel.images) Image.network(image.link),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ChangeNotifierProvider(
+                      create: (_) => GridViewModel(viewModel.usecase),
+                      child: GridView1(),
+                    ),
+                  ),
+                );
+              },
+              child: Text('그리드뷰로'),
+            ),
+          ),
+        ],
       ),
     );
   }
